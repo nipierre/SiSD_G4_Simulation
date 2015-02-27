@@ -1,0 +1,39 @@
+/run/verbose 2
+/run/initialize
+/control/execute vis.mac
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/sceneHandler/attach
+/vis/viewer/set/viewpointThetaPhi 90 90
+/vis/viewer/set/hiddenMarker true
+/vis/scene/add/trajectories smooth
+/tracking/storeTrajectory 2
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 4
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/set 1 blue
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/drawByCharge-0/set -1 red
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/drawByCharge-0/set 0 white
+/vis/scene/notifyHandlers scene-0
+/vis/scene/endOfEventAction accumulate
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add proton
+/vis/scene/notifyHandlers scene-0
+/vis/set/colour red
+/vis/scene/add/axes 0 0 0 1 cm
+/vis/geometry/set/visibility World 0 false
+/vis/geometry/set/visibility Detector 0 false
+/vis/scene/endOfEventAction accumulate -1
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+/tracking/verbose 0
+/run/beamOn 500000
+/vis/scene/notifyHandlers scene-0
