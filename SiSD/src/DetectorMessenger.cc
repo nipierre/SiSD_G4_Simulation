@@ -44,13 +44,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * det) :
   thetaTargetCmd->SetParameterName("thetaTarget",true);
   thetaTargetCmd->SetUnitCategory("Angle");
   thetaTargetCmd->SetDefaultUnit("deg");
-
-  updateCmd = new G4UIcmdWithoutParameter("/det/update",this);
-  updateCmd->SetGuidance("force to recompute geometry.");
-  updateCmd->SetGuidance("This command MUST be applied before \"beamOn\" ");
-  updateCmd->SetGuidance("if you changed geometrical value(s).");
-  updateCmd->AvailableForStates(G4State_Idle);
-
 }
 
 DetectorMessenger::~DetectorMessenger()
@@ -62,8 +55,6 @@ DetectorMessenger::~DetectorMessenger()
 
   delete SensorDir;
   delete TargetDir;
-
-  delete updateCmd;
 
   delete detDir;
 }

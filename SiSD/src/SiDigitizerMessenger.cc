@@ -15,17 +15,17 @@ SiDigitizerMessenger::SiDigitizerMessenger(SiDigitizer* digitizer) :
 
         pedestalCmd = new G4UIcmdWithADouble("/det/digi/pedestal",this);
         pedestalCmd->SetGuidance("Set pedestal value");
-        pedestalCmd->SetDefaultValue(5000);
+        pedestalCmd->SetDefaultValue(50.);
         pedestalCmd->AvailableForStates(G4State_Idle);
 
         noiseCmd = new G4UIcmdWithADouble("/det/digi/noise",this);
         noiseCmd->SetGuidance("Set the variation of noise around the pedestal");
-        noiseCmd->SetDefaultValue(1000);
+        noiseCmd->SetDefaultValue(10.);
         noiseCmd->AvailableForStates(G4State_Idle);
 
         crosstalkCmd = new G4UIcmdWithADouble("/det/digi/crosstalk",this);
         crosstalkCmd->SetGuidance("Set the crosstalk fraction between strips");
-        crosstalkCmd->SetDefaultValue(0.05);
+        crosstalkCmd->SetDefaultValue(0.);
         crosstalkCmd->AvailableForStates(G4State_Idle);
 }
 

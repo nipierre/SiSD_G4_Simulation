@@ -1,20 +1,37 @@
-#ifndef ActionInitialization_h
-#define ActionInitialization_h 1
+/*
+  \file     ActionInitialization.hh
+  \brief    Reimplementation of G4VUserActionInitialization
+*/
+
+#ifndef ACTIONINITIALIZATION_HH_
+#define ACTIONINITIALIZATION_HH_
 
 #include "G4VUserActionInitialization.hh"
 
-/// Action initialization class.
-///
-
+/*!
+* \class ActionInitialization
+* \brief Reimplementation of G4VUserActionInitialization
+*/
 class ActionInitialization : public G4VUserActionInitialization
 {
   public:
+    /*!
+    * \brief Constructor
+    */
     ActionInitialization();
+    /*!
+    * \brief Destructor
+    */
     virtual ~ActionInitialization();
 
+    /*!
+    * \brief Build for Master
+    */
     virtual void BuildForMaster() const;
+    /*!
+    * \brief Initialize the Run
+    */
     virtual void Build() const;
-
 };
 
 #endif

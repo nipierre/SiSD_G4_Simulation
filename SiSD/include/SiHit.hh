@@ -1,48 +1,61 @@
-#ifndef SiHit_h
-#define SiHit_h 1
+/*
+  \file     SiHit.hh
+  \brief    Manage Hits
+*/
+#ifndef SIHIT_HH_
+#define SIHIT_HH_
 
 #include "G4VHit.hh"
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 #include "G4THitsCollection.hh"
 
-class SiHit : public G4VHit {
-public:
+/*!
+* \class SiHit
+* \brief Manage Hits
+*/
+class SiHit : public G4VHit
+{
+  public:
+    /*!
+    * \brief Constructor
+    * \param strip : Id of the strip
+    * \param plane : Id of the sensor
+    * \param isPrimary : particle is primary ?
+    */
+    SiHit(const G4int strip, const G4int plane, const G4bool isPrimary);
+    /*!
+    * \brief Destructor
+    */
+    ~SiHit();
+    /*!
+    * \brief Print the current Hit
+    */
+    void Print();
 
-  SiHit(const G4int strip, const G4int plane, const G4bool isPrimary);
+  public:
+    inline void *operator    new(size_t);
+    inline void  operator delete(void *aHit);
 
-  ~SiHit();
+    void AddEdep(const double e)                { eDep += e; }
+    void SetPosition(const G4ThreeVector & pos) { position = pos; }
 
-  void Print();
+    G4double      GetEdep()        const { return eDep;}
+    G4ThreeVector GetPosition()    const { return position; }
+    G4int         GetStripNumber() const { return stripNumber; }
+    G4int         GetPlaneNumber() const { return planeNumber; }
+    G4bool        GetIsPrimary()   const { return isPrimary; }
 
-public:
-
-  inline void *operator    new(size_t);
-  inline void  operator delete(void *aHit);
-
-  void AddEdep(const double e)                { eDep += e; }
-  void SetPosition(const G4ThreeVector & pos) { position = pos; }
-
-  G4double      GetEdep()        const { return eDep;}
-  G4ThreeVector GetPosition()    const { return position; }
-  G4int         GetStripNumber() const { return stripNumber; }
-  G4int         GetPlaneNumber() const { return planeNumber; }
-  G4bool        GetIsPrimary()   const { return isPrimary; }
-
-
-private:
-
-  const G4int   stripNumber, planeNumber;
-  G4double      eDep;
-  G4ThreeVector position;
-  const G4bool  isPrimary;
+  private:
+    const G4int   stripNumber, planeNumber;
+    G4double      eDep;
+    G4ThreeVector position;
+    const G4bool  isPrimary;
 };
 
-// Define the "hit collection" using the template class G4THitsCollection:
 typedef G4THitsCollection<SiHit> SiHitCollection;
 
-
-// new and delete overloaded
+// Avoid compilator yelling on you
 extern G4Allocator<SiHit> SiHitAllocator;
 
 inline void* SiHit::operator new(size_t)

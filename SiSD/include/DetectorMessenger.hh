@@ -1,5 +1,10 @@
-#ifndef DetectorMessenger_h
-#define DetectorMessenger_h 1
+/*
+  \file     DetectorMessenger.hh
+  \brief    UI commands wrapper for the detector construction
+*/
+
+#ifndef DETECTORMESSENGER_HH_
+#define DETECTORMESSENGER_HH_
 
 #include "globals.hh"
 #include "G4UImessenger.hh"
@@ -12,14 +17,24 @@ class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithABool;
 
-
+/*!
+* \class DetectorMessenger
+* \brief UI commands wrapper for the detector construction
+*/
 class DetectorMessenger: public G4UImessenger
 {
 public:
+  /*!
+  * \brief Constructor
+  */
   DetectorMessenger(DetectorConstruction* );
-
+  /*!
+  * \brief Destructor
+  */
   ~DetectorMessenger();
-
+  /*!
+  * \brief Enter a new value in a command
+  */
   void SetNewValue(G4UIcommand*, G4String);
 
 private:
@@ -34,8 +49,6 @@ private:
   G4UIcmdWithADoubleAndUnit* targetOffsetCmd;
   G4UIcmdWithADoubleAndUnit* thetaSensorCmd;
   G4UIcmdWithADoubleAndUnit* thetaTargetCmd;
-
-  G4UIcmdWithoutParameter*   updateCmd;
 };
 
 #endif

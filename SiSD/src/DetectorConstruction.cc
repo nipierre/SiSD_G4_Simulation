@@ -42,7 +42,7 @@ DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction(),
   fCheckOverlaps(true)
 {
-  //Create a messanger (defines custom UI commands)
+  //Messenger for UI commands
   messenger = new DetectorMessenger(this);
 
   DefineMaterials();
@@ -54,27 +54,30 @@ DetectorConstruction::DetectorConstruction()
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
 
+
 DetectorConstruction::~DetectorConstruction()
 {
   delete messenger;
 }
 
+
 void DetectorConstruction::DefineMaterials()
 {
- //Get Materials from NIST database
- G4NistManager* man = G4NistManager::Instance();
- man->SetVerbose(0);
+  //Get Materials from NIST database
+  G4NistManager* man = G4NistManager::Instance();
+  man->SetVerbose(0);
 
- // define NIST materials
- // Density multiplied by 100 from the experiment to collect more data / faster
- G4double density = 10.*g/cm3; //223*ug/cm2 * 100
+  // define NIST materials
+  // Modify density to act on rate
+  G4double density = 10.*g/cm3;
 
- silicon = man->FindOrBuildMaterial("G4_Si");
- gold = man->BuildMaterialWithNewDensity("Au_223","G4_Au",density);
- carbon = man->FindOrBuildMaterial("G4_C");
- aluminium = man->FindOrBuildMaterial("G4_Al");
- vacuum  = man->FindOrBuildMaterial("G4_Galactic");
+  silicon = man->FindOrBuildMaterial("G4_Si");
+  gold = man->BuildMaterialWithNewDensity("Au_223","G4_Au",density);
+  carbon = man->FindOrBuildMaterial("G4_C");
+  aluminium = man->FindOrBuildMaterial("G4_Al");
+  vacuum  = man->FindOrBuildMaterial("G4_Galactic");
 }
+
 
 void DetectorConstruction::DefineGlobalField(G4ThreeVector fieldValue, G4double minStepValue)
 {
@@ -105,57 +108,50 @@ G4FieldManager* DetectorConstruction::DefineLocalField(G4ThreeVector fieldValue,
   return fieldMgr;
 }
 
+
 void DetectorConstruction::ComputeParameters()
 {
- //This function defines the defaults
- //of the geometry construction
+  // ** World **
+  halfWorldLength = 50*cm;
 
- // ** world **
- halfWorldLength = 50*cm;
+  // ** Target **
+  targetRadius = 2.5*mm;
+  targetThickness = 12*um;
+  targetOffset = 6*cm;
+  targetTheta = 0.*deg;
+  targetMaterial = gold;
 
- // ** Target **
- targetRadius = 2.5*mm;
- targetThickness = 12*um;
- targetOffset = 6*cm;
- targetTheta = 0.*deg;
- targetMaterial = gold;
+  // ** Si Strip Detector **
+  noOfSensorStrips = 16;
+  bulkLength = 50.*mm;
+  bulkThickness = 251.*um;
+  sensorThickness = 60.*um;
+  maskThickness = 0*mm;
+  holesRadius = 0.5*mm;
+  stripLength  = 3.025*mm;
+  stripPitch = 100*um;
+  detectorOffset = 6*cm;
+  detectorTheta = 55.*deg;
 
- // ** Si Detector **
- noOfSensorStrips = 16;
- bulkLength = 50.*mm;
- bulkThickness = 251.*um;
- sensorThickness = 60.*um;
- maskThickness = 0*mm;
- holesRadius = 0.5*mm;
- stripLength  = 3.025*mm;
- stripPitch = 100*um;
- detectorOffset = 6*cm;
- detectorTheta = 55.*deg;
-
- for(int i=0; i<8; i++)
-   for(int j=0; j<9; j++)
-   {
+  // ** Mask **
+  for(int i=0; i<8; i++)
+    for(int j=0; j<9; j++)
+    {
       if(j!=4 && j!=5)
         holesMask[i][j] = 0;
       else
         holesMask[i][j] = 1;
     }
-
- /*holesMask = {{0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0},
-              {0,0,0,0,1,1,0,0,0}};*/
-
 }
+
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 
-  // World
+  // ----------------------------------------------------------
+  // -- World
+  // ----------------------------------------------------------
+
   G4Box* solidWorld            = new G4Box("World", halfWorldLength, halfWorldLength, halfWorldLength);
   logicWorld                   = new G4LogicalVolume(solidWorld, vacuum, "World");
   G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0, fCheckOverlaps);
@@ -173,9 +169,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   return physWorld;
 }
 
+
 G4VPhysicalVolume* DetectorConstruction::ConstructTarget()
 {
-  // Target
+
+  // ----------------------------------------------------------
+  // -- Target
+  // ----------------------------------------------------------
+
   G4Tubs* solidTarget          = new G4Tubs("Target", 0, targetRadius, targetThickness/2, 0, 360);
   G4LogicalVolume* logicTarget = new G4LogicalVolume(solidTarget, targetMaterial, "Target");
   G4RotationMatrix* rm = new G4RotationMatrix;
@@ -185,12 +186,15 @@ G4VPhysicalVolume* DetectorConstruction::ConstructTarget()
 
   physiTarget = new G4PVPlacement(rm, posTarget, logicTarget, "Target", logicWorld, FALSE, 0, fCheckOverlaps);
 
+  //--------- Visualization attributes -------------------------------
+
   G4Color yellow(1.0,1.0,0.0);
 
   logicTarget -> SetVisAttributes(new G4VisAttributes(yellow));
 
   return physiTarget;
 }
+
 
 G4VPhysicalVolume* DetectorConstruction::ConstructSensor()
 {
@@ -218,6 +222,22 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSensor()
   G4double halfStripX = bulkLength/2.;
   G4double halfStripY = stripLength/2.;
   G4double halfStripZ = sensorThickness/2.;
+
+
+  // ----------------------------------------------------------
+  // * The Goal here is to construct the detector piece by
+  // * piece.
+  // * Inside the detector, there's the sensitive layer,
+  // * the bulk and the mask.
+  // * Inside the sensitive layer, there's the strips.
+  // * The strips are constructed this way : construction of
+  // * a volume that engulf both the strip and the pitch
+  // * btwn them, construction inside this volume of the real
+  // * strip volume, and replication of the first volume by the
+  // * number of strips.
+  // * We then associate a SensibleDetector to the strips in
+  // * order to be able to track the hits in this area.
+  // ----------------------------------------------------------
 
 
   // ----------------------------------------------------------
@@ -305,9 +325,11 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSensor()
     sensitive = new SensitiveDetector("/myDet/SiStripSD");
 
     G4SDManager::GetSDMpointer()->AddNewDetector(sensitive);
-
-    logicStrip->SetSensitiveDetector(sensitive);
   }
+
+  logicStrip->SetSensitiveDetector(sensitive);
+
+  //--------- Visualization attributes -------------------------------
 
   G4Color red(1.0,0.0,0.0);
 
@@ -315,6 +337,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructSensor()
 
   return physiDetector;
 }
+
 
 void DetectorConstruction::UpdateGeometry()
 {

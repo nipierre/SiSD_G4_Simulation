@@ -13,7 +13,6 @@ SymMatrix::SymMatrix()
    for(int j=i; j<16; j++)
    {
      mat[i][j] = 0;
-     //G4cout<< "mat " << j << i << " : "<< mat[j][i] <<G4endl;
    }
 }
 
@@ -27,7 +26,6 @@ SymMatrix::SymMatrix(int init)
      for(int j=i; j<16; j++)
      {
        mat[i][j] = 0;
-       //G4cout<< "mat " << j << i << " : "<< mat[j][i] <<G4endl;
      }
   }
   break;
@@ -41,7 +39,6 @@ SymMatrix::SymMatrix(int init)
         mat[i][i] = 1;
        else
         mat[i][j] = 0;
-       //G4cout<< "mat " << j << i << " : "<< mat[j][i] <<G4endl;
      }
   break;
   }
@@ -49,8 +46,6 @@ SymMatrix::SymMatrix(int init)
   default:
     G4cout << "SymMatrix: initialization must be either 0 or 1." << G4endl;
   }
-
-  //G4cout<< "mat constructed " <<G4endl;
 }
 
 //
@@ -121,12 +116,10 @@ std::vector<double> operator*(const SymMatrix &sm1,const std::vector<double> &sm
       if(j<i)
       {
         mret[i] += sm1.mat[j][i]*sm2[j];
-        //G4cout<< "mat " << j << i << " : "<< sm1.mat[j][i] <<G4endl;
       }
       else
       {
         mret[i] += sm1.mat[i][j]*sm2[j];
-        //G4cout<< "mat " << i << j << " : "<< sm1.mat[i][j] <<G4endl;
       }
     }
   }
