@@ -31,7 +31,7 @@ void fillTH2F(TBranch *dataBranch1, TBranch *dataBranch2, TH2F *hData)
 
 		dataBranch1->GetEntry(i);
 		dataBranch2->GetEntry(i);
-		hData->Fill(data1, data2);
+		hData->Fill(data1, data2/2);
 	}
 	//if (hData->Integral()!=0) hData->Scale(1/hData->Integral()); // Normalization
 }
@@ -85,7 +85,7 @@ int Trace()
 			if(run->IsOpen()) {
 
 				TH2F *histoXY = new TH2F("XY", "Position (X,Y)", 100, -25, 25, 100, -25, 25);
-				TH2F *histoES = new TH2F("ES", "Strip vs Energy", 50, 0, 2500, 16, 1, 17);
+				TH2F *histoES = new TH2F("ES", "Strip vs Energy", 100, 0, 2500, 16, 1, 17);
 
 				TTree *SiSD = (TTree*) run->Get("SiSD");
 

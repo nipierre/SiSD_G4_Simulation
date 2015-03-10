@@ -28,7 +28,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));
 
 
-    ofstream  inputParticles("../input.txt", ios::out);
+  /*  ofstream  inputParticles("../input.txt", ios::out);
               inputParticles  << "Particle"
                               << "\t" << "Time"
                               << "\tX (mm)"
@@ -37,7 +37,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
                               << "\tE (keV)"
                               << endl;
 
-              inputParticles.close();
+              inputParticles.close();*/
 
 }
 
@@ -52,7 +52,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double x = CLHEP::RandGauss::shoot(new CLHEP::RanecuEngine(), 0, 400*um);
   G4double y = CLHEP::RandGauss::shoot(new CLHEP::RanecuEngine(), 0, 400*um);
   G4double E = 2*MeV+CLHEP::RandGauss::shoot(new CLHEP::RanecuEngine(), 0, 6*keV);
-  ofstream  inputParticles("../input.txt", ios::out | ios::app);
+  /*ofstream  inputParticles("../input.txt", ios::out | ios::app);
             inputParticles  << fParticleGun->GetParticleDefinition()->GetParticleName()
                             << "\t" << fParticleGun->GetParticleTime()
                             << "\t" << x
@@ -61,7 +61,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
                             << "\t" << E
                             << endl;
 
-            inputParticles.close();
+            inputParticles.close();*/
 
   fParticleGun->SetParticleEnergy(E);
   fParticleGun->SetParticlePosition(G4ThreeVector(x,y,0));

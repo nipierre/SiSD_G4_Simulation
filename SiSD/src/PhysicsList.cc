@@ -117,6 +117,6 @@ void PhysicsList::SetCuts()
   SetCutsWithDefault();
   DumpCutValuesTable();
 
-  SetCutValue(1*um, "e-");
-  SetCutValue(1*um, "e+");
+  SetCutValue(10*um, "e-");
+  SetCutValue(10*um, "e+");
 }

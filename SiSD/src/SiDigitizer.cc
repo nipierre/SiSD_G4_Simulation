@@ -45,7 +45,7 @@ void SiDigitizer::Digitize()
       }
   }
 
-  // Transformatio from hits to electronic signal
+  // Transformation from hits to electronic signal
   G4DigiManager* digMan = G4DigiManager::GetDMpointer();
   G4int SiHitCollID = digMan->GetHitsCollectionID( hitsCollName );//Number associated to hits collection names hitsCollName
   const SiHitCollection* hitCollection = static_cast<const SiHitCollection*>(digMan->GetHitsCollection(SiHitCollID));

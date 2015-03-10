@@ -69,7 +69,7 @@ void DetectorConstruction::DefineMaterials()
 
   // define NIST materials
   // Modify density to act on rate
-  G4double density = 10.*g/cm3;
+  G4double density = 10*g/cm3;
 
   silicon = man->FindOrBuildMaterial("G4_Si");
   gold = man->BuildMaterialWithNewDensity("Au_223","G4_Au",density);

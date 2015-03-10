@@ -133,7 +133,7 @@ void RootSaver::AddEvent( const SiHitCollection* const hits, const SiDigiCollect
                 xPos = 0;
                 yPos = 0;
 
-                G4double sensorTheta = 55*CLHEP::deg;
+                G4double sensorTheta = 0*CLHEP::deg;
                 G4double zDefault = 60*(1+cos(sensorTheta));
                 G4double xDefault = -60*sin(sensorTheta);
 
@@ -177,7 +177,7 @@ void RootSaver::AddEvent( const SiHitCollection* const hits, const SiDigiCollect
                                   else
                                     xPos = -sqrt(pow(x-xDefault,2)+pow(z-zDefault,2));
                                 }
-                                 yPos = 2*y;
+                                 yPos = y;
                                  real = true;
                                }
 

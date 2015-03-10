@@ -33,17 +33,19 @@ void fillEnergyStrip(TBranch *dataBranch, TH1F *hData)
 		for(Int_t j = 3; j < 12; j++) {
 
 			if(data[j] > 100) {
-				hData->Fill(data[j]*3.6/1000+684);
+				hData->Fill(data[j]*3.6/1000);
 			}
 		}
 	}
-	//if (hData->Integral()!=0) hData->Scale(1/hData->Integral()); // Normalization
 }
 
 int Analysis(int i)
 {
-	TCanvas *window = new TCanvas("windows", "Display data", 1000, 650);
-					 window->Divide(2,1);
+	gStyle->SetOptStat(0);
+	gStyle->SetLegendBorderSize(0);
+
+	TCanvas *window = new TCanvas("windows", "Display data", 500, 500);
+					 window->Divide(1,2);
 
 	TString filename = Form("run%d.root", i);
 	TFile* run = new TFile(filename);
@@ -51,18 +53,16 @@ int Analysis(int i)
 
 	if(run->IsOpen()) {
 
-		TH2F *histoXY = new TH2F("XY", "Position (X,Y)", 100, -25, 25, 100, -25, 25);
-		TH1F *histoES = new TH1F("ES", "Energy spectrum", 50, 0, 2500);
+		TH1F *histoES = new TH1F("", "", 200, 0, 2500);
 
 		TTree *SiSD = (TTree*) run->Get("SiSD");
 
-		fillTH2F(SiSD->GetBranch("xPos"), SiSD->GetBranch("yPos"), histoXY);
 		fillEnergyStrip(SiSD->GetBranch("StripSignal"), histoES);
 
 		TString filenameCoeff = "./coeff.txt";
 	  ifstream coeffFile(filenameCoeff);
 
-	  TH1F *sum = new TH1F ("sum","somme", 32000,0 , 32000);
+	  TH1F *sum = new TH1F ("","", 32000,0 , 32000);
 
 	  for(Int_t l=0; l<32000; l++) {
 
@@ -102,26 +102,51 @@ int Analysis(int i)
 			}
 		}
 
+		Double_t rescaleSum, rescaleES;
+		Double_t meanSum, meanES;
+
+		TLegend* leg1 = new TLegend(0.1,0.75,0.5,0.9);
+		TLegend* leg2 = new TLegend(0.1,0.75,0.5,0.9);
+
 		window->cd(1);
-		histoXY->GetXaxis()->SetTitle("X (mm)");
-		histoXY->GetYaxis()->SetTitle("Y (mm)");
-		histoXY->Draw("LEGO");
+		sum->GetXaxis()->SetRangeUser(100,2500);
+		rescaleSum = sum->GetBinContent(sum->GetMaximumBin());
+		meanSum = sum->GetBinCenter(sum->GetMaximumBin());
+		sum->Scale(1/rescaleSum);
+		sum -> GetXaxis() -> SetLabelSize(0.06);
+		sum -> GetYaxis() -> SetLabelSize(0.06);
+    sum -> GetXaxis() -> SetTitleSize(0.057);
+    sum -> GetXaxis() -> SetTitleOffset(0.760);
+		leg1->AddEntry(sum, "Experiment", "");
+		leg1->AddEntry(sum, Form("Peak centroid = %d keV", Int_t(meanSum)), "");
+		leg1->SetFillStyle(0);
+		sum->Draw();
+		leg1->Draw("SAME");
 
 		window->cd(2);
-		histoES->GetXaxis()->SetTitle("Energy (keV)");
-		histoES->GetYaxis()->SetTitle("# of Hits");
-		histoES->GetYaxis()->SetRangeUser(0,1250);
-
+		histoES->GetXaxis()->SetTitle("E (keV)");
+		histoES->GetXaxis()->SetRangeUser(100,2500);
+		rescaleES = histoES->GetBinContent(histoES->GetMaximumBin());
+		meanES = histoES->GetBinCenter(histoES->GetMaximumBin());
+		histoES->Scale(1/rescaleES);
+		histoES->SetLineColor(kRed);
+		histoES -> GetXaxis() -> SetLabelSize(0.06);
+		histoES -> GetYaxis() -> SetLabelSize(0.06);
+    histoES -> GetXaxis() -> SetTitleSize(0.057);
+    histoES -> GetXaxis() -> SetTitleOffset(0.85);
+		leg2->AddEntry(histoES, "Geant4 Simulation", "");
+		leg2->AddEntry(histoES, Form("Peak centroid = %d keV", Int_t(meanES)), "");
+		leg2->SetFillStyle(0);
 		histoES->Draw();
-
-		sum->GetXaxis()->SetRangeUser(100,2500);
-		sum->Draw("SAME");
+		leg2->Draw("SAME");
 
 		window->Modified();
 		window->Update();
 
 		cout << "(Press enter over the window, to continue)" << endl;
 		window->WaitPrimitive(); // Wait a double click or pressing enter
+
+		window->SaveAs("histo_simu.pdf");
 
 		run->Close();
 
